@@ -109,7 +109,7 @@ See [privacy and data handling](PRIVACY.md) and the [security policy](SECURITY.m
 | `rosa/web/` | Local simulation console and its icon |
 | `examples/` | Runnable SDK examples |
 | `schemas/` | JSON contracts |
-| `tests/` | Core, adapter and public-session tests |
+| `tests/` | Core, adapter and local-console tests |
 | `docs/` | Architecture, Spanish guide, integrations, validation and roadmap |
 | `.github/` | CI and issue/PR templates |
 
