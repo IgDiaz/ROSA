@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "action",
+    "target"
+  ],
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "navigate",
+        "inspect",
+        "dock",
+        "hold",
+        "report",
+        "clarify"
+      ]
+    },
+    "target": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "base",
+        "linea_1",
+        "linea_2",
+        "almacen",
+        null
+      ]
+    }
+  }
+}

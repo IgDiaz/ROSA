@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>ROSA agave</title>
+  <rect width="64" height="64" rx="16" fill="#6c2339"/>
+  <g fill="#f4ead8">
+    <path d="M32 52C26 38 28 22 32 8c4 14 6 30 0 44Z"/>
+    <path d="M28 52C19 43 14 27 15 15c9 10 15 24 13 37Z"/>
+    <path d="M36 52c9-9 14-25 13-37-9 10-15 24-13 37Z"/>
+    <path d="M26 52C14 47 8 36 6 25c11 7 19 16 20 27Z"/>
+    <path d="M38 52c12-5 18-16 20-27-11 7-19 16-20 27Z"/>
+    <path d="M25 54C15 55 8 51 5 44c10 1 17 3 20 10Z"/>
+    <path d="M39 54c10 1 17-3 20-10-10 1-17 3-20 10Z"/>
+  </g>
+</svg>

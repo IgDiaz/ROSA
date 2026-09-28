@@ -1,0 +1,41 @@
+name: tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  core:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m unittest discover -s tests -p test_runtime.py -v
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip wheel --no-deps . -w dist
+      - run: python -m pip install --no-deps dist/*.whl
+      - name: Verify installed package boundary and console assets
+        working-directory: /tmp
+        run: |
+          python - <<'PYTHON'
+          from importlib.metadata import distribution
+          from importlib.resources import files
+          import rosa
+          assert rosa.__version__ == '0.3.1'
+          package_files = [str(p) for p in distribution('rosa-robotics-kit').files]
+          assert not any('landing.html' in p or 'hosted.py' in p for p in package_files)
+          assert files('rosa').joinpath('web/index.html').is_file()
+          assert files('rosa').joinpath('web/favicon.svg').is_file()
+          print('Installed SDK contains functional console assets and no website server or landing.')
+          PYTHON

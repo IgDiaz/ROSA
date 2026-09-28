@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ROSA context event v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "type",
+    "event_id",
+    "user_id",
+    "robot_id",
+    "at",
+    "revision",
+    "mode",
+    "facts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "type": {
+      "const": "robot.context"
+    },
+    "event_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "user_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+    },
+    "robot_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+    },
+    "at": {
+      "type": "number"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "mode": {
+      "enum": [
+        "simulation",
+        "observation"
+      ]
+    },
+    "facts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "battery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "source",
+            "confidence",
+            "observed_at",
+            "age_s",
+            "fresh"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "observed_at": {
+              "type": "number"
+            },
+            "age_s": {
+              "type": "number"
+            },
+            "fresh": {
+              "type": "boolean"
+            }
+          }
+        },
+        "obstacle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "source",
+            "confidence",
+            "observed_at",
+            "age_s",
+            "fresh"
+          ],
+          "properties": {
+            "value": {
+              "type": "boolean"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "observed_at": {
+              "type": "number"
+            },
+            "age_s": {
+              "type": "number"
+            },
+            "fresh": {
+              "type": "boolean"
+            }
+          }
+        },
+        "estop": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "source",
+            "confidence",
+            "observed_at",
+            "age_s",
+            "fresh"
+          ],
+          "properties": {
+            "value": {
+              "type": "boolean"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "observed_at": {
+              "type": "number"
+            },
+            "age_s": {
+              "type": "number"
+            },
+            "fresh": {
+              "type": "boolean"
+            }
+          }
+        },
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "source",
+            "confidence",
+            "observed_at",
+            "age_s",
+            "fresh"
+          ],
+          "properties": {
+            "value": {
+              "enum": [
+                "base",
+                "linea_1",
+                "linea_2",
+                "almacen"
+              ]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "observed_at": {
+              "type": "number"
+            },
+            "age_s": {
+              "type": "number"
+            },
+            "fresh": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  }
+}
