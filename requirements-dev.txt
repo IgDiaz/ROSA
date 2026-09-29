@@ -1,0 +1,5 @@
+# Development tools only; the SDK runtime remains standard-library based.
+coverage==7.16.2
+ruff==0.16.9
+jsonschema==4.26.0
+build==1.6.1

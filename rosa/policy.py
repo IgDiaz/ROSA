@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 """Deterministic application gates; not a certified robot safety system."""
 from .context import CAPABILITIES, DESTINATIONS, TTL
+from .profile import OperationalProfile
 
 INTENT_SCHEMA = {
     "type": "object", "additionalProperties": False,
@@ -27,6 +28,7 @@ def validate_intent(value):
 
 def assess(snapshot, intent):
     intent = validate_intent(intent)
+    profile = OperationalProfile.from_dict(snapshot.get("profile", {}))
     action = intent["action"]
     if action == "clarify":
         return "clarify", "Necesito una tarea y un destino concretos, por ejemplo: inspecciona línea 2."
@@ -36,15 +38,19 @@ def assess(snapshot, intent):
         return "ready", "La tarea no requiere desplazamiento. Los datos vencidos se muestran como tales."
     for name in TTL:
         fact = snapshot["facts"].get(name)
-        if not fact or not fact["fresh"] or fact["confidence"] < 0.8:
+        if not fact or not fact["fresh"] or fact["confidence"] < profile.minimum_confidence:
             return "blocked", f"No hay evidencia reciente y confiable de {name}. Actualiza la telemetría."
+        if profile.allowed_sources and fact["source"] not in profile.allowed_sources:
+            return "blocked", f"La fuente de {name} no pertenece al perfil operativo."
+        if profile.require_acquisition_time and fact.get("timestamp_kind") != "acquired":
+            return "blocked", f"Falta fecha de adquisición verificable de {name}."
     f = {key: item["value"] for key, item in snapshot["facts"].items()}
     if f["estop"]:
         return "blocked", "El paro está activo. Resuelve la condición antes de proponer movimiento."
     if f["obstacle"]:
         return "blocked", "Hay un obstáculo reportado. Espera a que la ruta esté libre."
-    minimum = 8 if action == "dock" else 20
+    minimum = profile.docking_battery if action == "dock" else profile.minimum_battery
     if f["battery"] < minimum:
-        reason = "Carga insuficiente para desplazarse incluso a la base." if action == "dock" else "Batería por debajo del 20 %. Propón volver a la base."
+        reason = "Carga insuficiente para desplazarse incluso a la base." if action == "dock" else f"Batería por debajo del {minimum:g} %. Propón volver a la base."
         return "blocked", reason
     return "ready", "Contexto reciente, capacidad registrada, ruta libre y batería suficiente."

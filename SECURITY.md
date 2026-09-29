@@ -1,6 +1,6 @@
 # Security
 
-This is an experimental simulator and integration toolkit, not a control or functional-safety system.
+This release supports simulation and ROS 2 observation. Physical control and functional safety require separately validated robot-specific systems.
 
 Do not post credentials, private telemetry or live-service exploit details in public issues. Use GitHub private vulnerability reporting if enabled. Otherwise, request a private contact in an issue without including sensitive details.
 

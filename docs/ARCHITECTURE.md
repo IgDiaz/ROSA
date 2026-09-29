@@ -39,4 +39,4 @@ console displays SDK outcomes; it does not reimplement eligibility rules.
 
 ## Constraints
 
-ROS observations use reception time, not acquisition time. Namespaces do not authenticate publishers. Destinations are fixed labels, not geometric maps. Thresholds and battery costs are illustrative. The gateway has no durable queue or inbound HTTP service. There is no real-time scheduler, navigation stack, secure boot or certified safety behavior.
+ROS stamped telemetry preserves acquisition time and sequence; legacy Bool/String inputs use reception time. Namespaces do not authenticate publishers. Destinations are fixed labels, not geometric maps. Operating thresholds and freshness windows are configurable per robot; default values and simulated battery costs are illustrative. The gateway has no durable queue or inbound HTTP service. There is no real-time scheduler, navigation stack, secure boot or certified safety behavior.

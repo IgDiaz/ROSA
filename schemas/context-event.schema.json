@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "ROSA context event v1",
+  "title": "ROSA context event v1.1",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -16,7 +16,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "1.0"
+      "const": "1.1"
     },
     "type": {
       "const": "robot.context"
@@ -60,7 +60,10 @@
             "confidence",
             "observed_at",
             "age_s",
-            "fresh"
+            "fresh",
+            "received_at",
+            "sequence",
+            "timestamp_kind"
           ],
           "properties": {
             "value": {
@@ -86,6 +89,23 @@
             },
             "fresh": {
               "type": "boolean"
+            },
+            "received_at": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sequence": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "timestamp_kind": {
+              "enum": [
+                "acquired",
+                "received"
+              ]
             }
           }
         },
@@ -98,7 +118,10 @@
             "confidence",
             "observed_at",
             "age_s",
-            "fresh"
+            "fresh",
+            "received_at",
+            "sequence",
+            "timestamp_kind"
           ],
           "properties": {
             "value": {
@@ -122,6 +145,23 @@
             },
             "fresh": {
               "type": "boolean"
+            },
+            "received_at": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sequence": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "timestamp_kind": {
+              "enum": [
+                "acquired",
+                "received"
+              ]
             }
           }
         },
@@ -134,7 +174,10 @@
             "confidence",
             "observed_at",
             "age_s",
-            "fresh"
+            "fresh",
+            "received_at",
+            "sequence",
+            "timestamp_kind"
           ],
           "properties": {
             "value": {
@@ -158,6 +201,23 @@
             },
             "fresh": {
               "type": "boolean"
+            },
+            "received_at": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sequence": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "timestamp_kind": {
+              "enum": [
+                "acquired",
+                "received"
+              ]
             }
           }
         },
@@ -170,7 +230,10 @@
             "confidence",
             "observed_at",
             "age_s",
-            "fresh"
+            "fresh",
+            "received_at",
+            "sequence",
+            "timestamp_kind"
           ],
           "properties": {
             "value": {
@@ -199,6 +262,23 @@
             },
             "fresh": {
               "type": "boolean"
+            },
+            "received_at": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sequence": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "timestamp_kind": {
+              "enum": [
+                "acquired",
+                "received"
+              ]
             }
           }
         }

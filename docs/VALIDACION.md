@@ -1,22 +1,19 @@
-# Validation — ROSA / Minerva 0.3.1
+# Validation evidence · ROSA / Minerva 0.4.0
 
-The independent SDK retains 22 tests for scoped context, persistence,
-proposal expiration, stale evidence, idempotent simulation, optional-adapter
-contracts, and the loopback HTTP console. Run:
+The standard-library suite includes **43 tests**. It covers scoped memory, requirements, acquisition age, source constraints, replay handling, proposal invalidation, delayed interpretation, clock rollback, additive database migration and concurrent confirmation, alongside the original adapter and loopback-console scenarios.
 
 ```bash
 python -m unittest discover -s tests -v
+python -m pip install -e . -r requirements-dev.txt
+python -m coverage run -m unittest discover -s tests
+python -m coverage report
+python -m ruff check .
+python scripts/check_contracts.py
+python scripts/benchmark.py
 ```
 
-The distribution check builds and installs the wheel outside the checkout,
-verifies the local console/icon are present, and rejects website landing/server
-files. CI runs core tests on Linux, Windows and macOS with Python 3.11/3.12,
-and a separate package check on Linux. Consult Actions for current results.
+The coverage gate is 80% including branches; its exact scope is in `QUALITY_DECLARATION.md`. CI uploads coverage XML and a 500-iteration timing report. Timings describe one rules/SQLite simulation workload on the runner, not robot performance or improvement over ROS 2.
 
-The website's session isolation and hosting tests belong to its separate
-application repository and are not SDK validation claims.
+The OS matrix runs Linux, Windows and macOS with Python 3.11/3.12. A clean wheel check verifies imported package identity, bundled console assets and separation from the private website. A separate `ros:jazzy-ros-base` job starts the actual observer and exchanges DDS messages: timestamped context arrives, an obstacle updates it and a replay cannot clear that obstacle.
 
-Not validated: physical robot control, a real ROS 2 deployment, a real Ollama
-model, an external agent receiver, production load, functional safety or
-performance improvements over another platform. Adapter tests use controlled
-responses. SQLite event history has no automatic retention policy.
+Current run results are published in [GitHub Actions](https://github.com/IgDiaz/ROSA/actions/workflows/tests.yml). Hardware actuation, actual model-specific accuracy, external receiver delivery, load and physical safety are separate experiment stages. Controlled Ollama and gateway responses test contracts; they are not results from a deployed model or third-party platform.

@@ -13,7 +13,7 @@ to `127.0.0.1` and uses an in-memory request token, not an analytics cookie.
 
 `ContextStore` can use in-memory SQLite or a file chosen by the integrator. The
 CLI defaults to `rosa-demo.sqlite3`. Stored data can include user/robot IDs,
-capabilities, observations and their sources/timestamps/confidence, operator
+capabilities, operating profiles, observations and their sources/acquisition and reception timestamps/sequences/confidence, operator
 requests, proposals, simulated results, event history and agent advisories.
 The supplied IDs are application identifiers, not authenticated user accounts.
 

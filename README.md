@@ -1,133 +1,148 @@
-# ROSA
+# ROSA · by CDT
 
-**Robotics Operational Systems and Agave** · An open-source project by CDT.
+![ROSA by CDT: context connecting robots, operators and AI](docs/assets/rosa-cover.svg)
 
-**Context checks for robot commands.** An experimental, MIT-licensed Python toolkit with scoped robot context, command proposals, local AI and ROS 2 adapters.
+**Robotics Operational Systems and Agave**
 
-**Minerva · v0.3.1** — named after Guadalajara and its region. [Español](docs/README.es.md) · [Architecture](docs/ARCHITECTURE.md) · [Integrations](docs/INTEGRACIONES.md) · [Contributing](CONTRIBUTING.md)
+**Context that connects robots, operators and AI.** ROSA is an open, MIT-licensed layer for robot context, command interpretation and inspectable decisions. It builds on established robotics interfaces and grows through continuous experimentation against the requirements of advanced industrial robotic systems.
 
-[Website](https://rosa.cdtglobal.org/) · [Try the simulator](https://rosa.cdtglobal.org/demo) · [Test results](https://github.com/IgDiaz/ROSA/actions/workflows/tests.yml)
+**Minerva · v0.4.0** · [Español](docs/README.es.md) · [API](docs/API.md) · [Integration](docs/INTEGRACIONES.md) · [Quality](QUALITY_DECLARATION.md) · [Migration](docs/MIGRATION.md)
 
-Ask a robot to **inspect line 2**. With fresh context and enough battery, the simulator can accept the task. With a blocked path, low battery or stale observations, the same request is rejected with an inspectable reason.
+[![Quality checks](https://github.com/IgDiaz/ROSA/actions/workflows/tests.yml/badge.svg)](https://github.com/IgDiaz/ROSA/actions/workflows/tests.yml)
 
-This is a context and command layer for robot applications, not a new operating-system kernel. ROS 2 remains responsible for its own drivers, middleware and application stack. The included runtime executes **simulated effects only**.
+[Interactive lab](https://rosa.cdtglobal.org/) · [Run the simulator](https://rosa.cdtglobal.org/demo) · [Development roadmap](docs/ROADMAP.md)
 
-## Quickstart
+## Built to evolve with your system
 
-Python 3.11 or newer. No extra dependencies or network connection are needed for the offline demo.
+A request such as **inspect line 2** gains meaning when the application knows the robot's capabilities, battery, route and current observations. ROSA turns that evidence into an explained proposal, checks it again at confirmation and keeps a trace of the outcome.
+
+ROS 2 supplies its drivers, communication and application ecosystem. ROSA contributes context and command orchestration alongside it. The current release supports local simulation and ROS 2 observation; physical execution belongs to a separately validated, robot-specific integration.
+
+## Quick Start
+
+### Requirements
+
+- **Python 3.11+** and Git, on Windows, macOS or Linux.
+- The offline simulator uses the Python standard library; ROS 2, a GPU and an AI model are optional integrations.
+- This guide installs **ROSA by CDT** (`rosa-robotics-kit`) from **IgDiaz/ROSA**. Use the dedicated environment below to keep its `rosa` import separate from other projects with the same name.
+
+### Installation
+
+Download the repository and create an isolated environment. Use `python3` if your system requires it:
 
 ```bash
 git clone https://github.com/IgDiaz/ROSA.git
 cd ROSA
-python -m rosa
+python -m venv .venv
 ```
 
-Open **http://127.0.0.1:8765**. On Windows you can also open `iniciar-demo.bat`; on macOS/Linux use `python3` if necessary. Use `--port 8770` if needed. `Ctrl+C` stops the server.
+**Windows — PowerShell or Command Prompt**
 
-1. Propose **Inspect line 2** and confirm the simulation.
-2. Select **Low battery** and propose the same task.
-3. Try **Return to base**.
-4. Select **No telemetry**, wait more than three seconds, and propose movement.
+```powershell
+.venv\Scripts\python.exe -m pip install .
+.venv\Scripts\python.exe -m rosa
+```
 
-The diagram animates discrete state changes; it is not a physics or navigation simulator. Inspections generate labelled example findings, not sensor measurements.
+**macOS / Linux**
+
+```bash
+.venv/bin/python -m pip install .
+.venv/bin/python -m rosa
+```
+
+### Your first experiment
+
+Open **http://127.0.0.1:8765** in your browser. Keep the terminal running; `Ctrl+C` stops the local server. Add `--port 8770` if the default port is occupied.
+
+1. Propose **Inspect line 2**, review the reason, then confirm the simulation.
+2. Select **Low battery** and submit the same request: the operating requirements change the decision.
+3. Try **Blocked route** or **No telemetry**. Observe how the explanation changes when evidence is obstructed or expires.
+
+The console animates simulated state transitions and generates labelled example findings. The illustration below summarizes the default scenarios; it is not a live telemetry feed.
+
+![The same command with fresh context, low battery and stale telemetry](docs/assets/context-decisions.svg)
+
+### How the layers work together
+
+```mermaid
+flowchart TD
+    A["ROS 2 telemetry / simulator"] --> B["Colomos: scoped context and requirements"]
+    U["Operator command"] --> C["Tequila: rules or local AI"]
+    B --> C
+    C --> D["Minerva: validate proposal"]
+    B --> D
+    D --> E{"Current evidence and requirements met?"}
+    E -->|No| F["Explain and request fresh context"]
+    E -->|Yes| G["Operator confirmation"]
+    G --> H["Recheck context and proposal expiry"]
+    B --> H
+    H -->|Valid| I["Simulate once and record result"]
+    H -->|Changed or expired| F
+    B --> J["Chapala: explicit signed context export"]
+```
+
+ROS 2 provides the communication and robotics interfaces. ROSA adds scoped context, interpretation and reviewable command decisions. The diagram's execution path is the included simulator; the ROS 2 adapter observes and publishes context. [Architecture and integration boundaries](docs/ARCHITECTURE.md).
 
 ## Libraries and codenames
 
 | Name | Module | Responsibility |
 |---|---|---|
-| **Colomos** | `rosa.context` | User/robot scope, observation provenance, freshness, revision and SQLite memory |
-| **Minerva** | `rosa.policy`, `rosa.runtime` | Allowed intents, deterministic checks, expiring proposals and idempotent simulation |
-| **Tequila** | `rosa.planner` | Small offline grammar or an optional local Ollama interpreter |
-| **Tonalá** | `rosa.ros2` | Optional ROS 2 telemetry observer and context publisher |
+| **Colomos** | `rosa.context`, `rosa.profile` | Scoped SQLite memory, persisted operating requirements, acquisition and reception timestamps, source allowlists and replay checks |
+| **Minerva** | `rosa.policy`, `rosa.runtime` | Deterministic checks, context revisions, expiring proposals and idempotent simulation |
+| **Tequila** | `rosa.planner` | Offline command grammar and optional local Ollama interpretation |
+| **Tonalá** | `rosa.ros2`, `rosa.telemetry` | ROS 2 observation and a versioned acquisition-time telemetry contract |
 | **Chapala** | `rosa.gateway` | Explicit signed HTTPS context export and advisory recording |
 
-These are names within one Python package, not five separately published packages. No PyPI publication or ROS distribution release is claimed.
+These modules ship together as the `rosa-robotics-kit` Python distribution, imported as `rosa`.
 
-## Use the SDK
-
-Run from the repository, or install with `python -m pip install .`:
+## Use operating requirements
 
 ```python
-from rosa import ContextStore, Runtime, Scope
+from rosa import ContextStore, OperationalProfile, Runtime, Scope
 
 store = ContextStore(":memory:")
 robot = Scope("factory", "amr_01")
-store.register(robot, mode="simulation")
-store.observe(robot, {
-    "battery": 82, "obstacle": False,
-    "estop": False, "position": "base",
-}, source="simulator")
-
-runtime = Runtime(store)
-plan = runtime.propose(robot, "Inspect line 2")
+profile = OperationalProfile(minimum_battery=30, obstacle_ttl_s=2,
+                             proposal_ttl_s=15, allowed_sources=("simulator",))
+store.register(robot, profile=profile)
+store.observe(robot, {"battery": 82, "obstacle": False,
+                      "estop": False, "position": "base"}, source="simulator")
+plan = Runtime(store).propose(robot, "Inspect line 2")
 print(plan["status"], plan["reason"])
-
-# In your application, obtain operator confirmation before calling this.
+# Obtain operator confirmation in your application before this call.
 if plan["status"] == "ready":
-    print(runtime.execute_simulation(robot, plan["id"])["result"])
+    Runtime(store).execute_simulation(robot, plan["id"])
 store.close()
 ```
 
-Every observation has a source, timestamp and confidence value. Confidence is supplied by the adapter, not a calibrated safety probability. Battery/position expire after 10 seconds; obstacle/stop after 3. Proposals expire after 30 seconds and are checked again before simulation. A semantic context change invalidates an older proposal. Repeating a confirmed proposal cannot duplicate its effect, even after reopening SQLite.
+Requirements are stored per robot. `configure()` explicitly updates them and invalidates outstanding proposals. Strict observation profiles require acquisition timestamps; sequence checks prevent a replay from making old evidence look current. Source names must be bound to authenticated adapters by the integration. Confidence is adapter-supplied metadata, not a calibrated safety probability.
 
-The demo uses four fixed facts and five actions. Thresholds are demonstration settings, not robot-specific limits. There is no trained context model, sensor fusion, causal reasoning, fault prediction or continuous learning.
+## Integration and experimentation
 
-## Optional adapters
+- **ROS 2:** the observer uses upstream `rclpy`, `sensor_msgs` and `std_msgs`. CI includes a real Jazzy graph with synthetic timestamped telemetry and replay rejection. [Run that experiment](docs/INTEGRACIONES.md).
+- **Local AI:** start with `python -m rosa --ollama-model YOUR_INSTALLED_MODEL`. Structured outputs pass the same deterministic rules. Model-specific accuracy, latency and hardware requirements are measured in the next experiment stage.
+- **Agents:** `AgentGateway.publish()` sends an allowlisted context envelope over signed HTTPS to your configured receiver. [Authentication and receiver responsibilities](docs/INTEGRACIONES.md).
 
-With Ollama running locally and a model already installed:
+The included execution API applies simulated effects. Hardware actuation, model-specific validation and external-platform delivery each have their own acceptance criteria in the [roadmap](docs/ROADMAP.md). Functional safety and the physical stop remain the robot system's responsibility.
 
-```bash
-python -m rosa --ollama-model YOUR_INSTALLED_MODEL
-```
+## Quality you can inspect
 
-Select Ollama in the local console. The model receives current context and up to five recent events from the same scope. Its output must pass schema and policy checks; it cannot write sensor facts, modify rules or execute arbitrary code. Model licenses and hardware needs are separate. Operator confirmation remains necessary because a model can misunderstand an otherwise valid request.
+- **43 regression tests** covering context age, requirements, source restrictions, replay, migration, concurrent confirmation, adapter contracts and the local console.
+- Linux, Windows and macOS test matrix with Python 3.11/3.12.
+- Branch-aware coverage with an enforced **80% minimum** for the measured SDK/console scope; ROS bridge and CLI are tracked separately.
+- Static error checks, JSON contract validation, installed-wheel checks and a real ROS 2 Jazzy integration job.
+- A repeatable timing experiment publishes CI evidence for this implementation; it makes no comparative claim against ROS 2.
 
-Tonalá observes ROS 2 battery, obstacle, stop and registered-position topics, then publishes JSON context. Observation profiles cannot execute. No actuator publisher is included.
-
-Chapala exports a minimal context event to a configured HTTPS endpoint with a bearer token, HMAC signature and event ID. No data is transmitted automatically. The receiver must authenticate, enforce scope and deduplicate events. See [integration contracts](docs/INTEGRACIONES.md).
-
-ROS 2, a real Ollama model and an external receiver have **not been validated end to end in this release**. Adapter contracts use controlled tests. This software is not a functional-safety system or a physical emergency stop.
+See the [quality declaration](QUALITY_DECLARATION.md), [validation scope](docs/VALIDACION.md) and [contribution guide](CONTRIBUTING.md). These practices take REP-2004 as a reference; maturity is demonstrated per capability and deployment environment.
 
 ## Repository scope
 
-This public repository contains the robotics SDK, optional adapters, schemas,
-examples, local simulation console and tests. The console in `rosa/web/` is a
-functional SDK tool served on loopback; it is not the project's landing page.
+`rosa/` contains the SDK and its local console; `schemas/` the integration contracts; `examples/` runnable starting points; `tests/` regression and ROS integration checks; `scripts/` quality experiments; `docs/` integration and API guidance. The website is maintained separately and imports a pinned SDK version.
 
-The public website is maintained separately and consumes this SDK as a pinned
-package dependency. Its application server, marketing page, hosting configuration
-and deployment history are not part of this repository. Installing ROSA does not
-require the website or a hosted account.
-
-See [privacy and data handling](PRIVACY.md) and the [security policy](SECURITY.md).
-
-## Repository layout
-
-| Directory | Contents |
-|---|---|
-| `rosa/` | Core, optional adapters and local console entry points |
-| `rosa/web/` | Local simulation console and its icon |
-| `examples/` | Runnable SDK examples |
-| `schemas/` | JSON contracts |
-| `tests/` | Core, adapter and local-console tests |
-| `docs/` | Architecture, Spanish guide, integrations, validation and roadmap |
-| `.github/` | CI and issue/PR templates |
-
-## Tests
-
-```bash
-# SDK, adapter contracts and loopback console: standard library only
-python -m unittest discover -s tests -v
-```
-
-See [validation notes](docs/VALIDACION.md) for completed checks. Contributions should include reproducible scenarios and narrowly scoped changes; performance claims need measurements.
+The Python distribution is `rosa-robotics-kit`, maintained by CDT at `IgDiaz/ROSA`. Use a dedicated virtual environment: NASA/JPL maintains a different package, `jpl-rosa`, which also uses the `rosa` import name. Install this project from the repository above and consult the [0.4 upgrade guide](docs/MIGRATION.md).
 
 ## License and provenance
 
-Original code: copyright © 2026 CDT, released under the [MIT License](LICENSE). The original MIT text remains unchanged. [LICENSE-CDT](LICENSE-CDT) separately records CDT's grant for its original contributions under the same MIT terms; it adds no restrictions and does not replace any upstream license or notice.
+Copyright © 2026 CDT. Original code remains under the [MIT License](LICENSE). [LICENSE-CDT](LICENSE-CDT) records CDT's grant under the same MIT terms without added restrictions. Third-party code and model weights retain their own licenses; see [third-party notices](THIRD_PARTY_NOTICES.md), [privacy](PRIVACY.md) and [security](SECURITY.md).
 
-ROS and ROS 2 are ecosystems with component-specific licenses, not a single MIT-licensed dependency. Third-party libraries, ROS packages and model weights retain their own licenses and notices; see [third-party notices](THIRD_PARTY_NOTICES.md). No affiliation with or endorsement by ROS, Open Robotics or Ollama is implied.
-
-This initial implementation was developed with AI assistance. Maintainer review, independent tests and hardware validation remain necessary before expanding its scope.
-
-Primary references: [ROS 2](https://github.com/ros2), [ROS 2 actions](https://design.ros2.org/articles/actions.html), [Ollama structured outputs](https://docs.ollama.com/capabilities/structured-outputs), [Ollama chat API](https://docs.ollama.com/api/chat). The ROS homepage blocked automated retrieval; official documentation informed the adapters. Architecture and demo thresholds are this project's choices.
+ROSA is independently maintained by CDT and is not affiliated with ROS, Open Robotics, Ollama or NASA/JPL's ROSA project. Development uses AI assistance with explicit tests and maintainer review. ROS 2 libraries are consumed through their public interfaces; they are not copied or relicensed as ROSA code.

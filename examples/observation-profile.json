@@ -1,0 +1,11 @@
+{
+  "require_acquisition_time": true,
+  "allowed_sources": [
+    "ros2/telemetry"
+  ],
+  "minimum_battery": 25,
+  "docking_battery": 10,
+  "minimum_confidence": 0.9,
+  "obstacle_ttl_s": 2,
+  "estop_ttl_s": 2
+}

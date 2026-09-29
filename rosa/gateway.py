@@ -12,7 +12,7 @@ from .planner import NoRedirect
 
 def context_envelope(snapshot, event_id=None):
     # Deliberately exclude commands, user text, event history and secrets.
-    return {"schema_version": "1.0", "type": "robot.context", "event_id": event_id or str(uuid.uuid4()),
+    return {"schema_version": "1.1", "type": "robot.context", "event_id": event_id or str(uuid.uuid4()),
             "user_id": snapshot["user_id"], "robot_id": snapshot["robot_id"],
             "at": snapshot["at"], "revision": snapshot["revision"], "mode": snapshot["mode"],
             "facts": {k: v for k, v in snapshot["facts"].items()

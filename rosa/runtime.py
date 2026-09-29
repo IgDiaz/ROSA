@@ -18,11 +18,18 @@ class Runtime:
         # Historical text is advisory context, never a substitute for live facts.
         planner_context = {**snapshot, "recent_events": self.store.history(scope, 5)}
         intent = validate_intent(self.planner.propose(text, planner_context))
+        planning_revision = snapshot["revision"]
+        # A local model can take seconds. Re-read evidence after interpretation;
+        # reject intents interpreted against a different semantic context.
+        snapshot = self.store.snapshot(scope)
         status, reason = assess(snapshot, intent)
+        if snapshot["revision"] != planning_revision:
+            status, reason = "blocked", "El contexto cambió durante la interpretación. Genera una nueva propuesta."
         plan = {"id": str(uuid.uuid4()), "request": text, "intent": intent,
                 "status": status, "reason": reason, "provider": self.planner.name,
                 "context_revision": snapshot["revision"], "created_at": self.store.clock(),
-                "expires_at": self.store.clock() + 30, "evidence": snapshot["facts"], "mode": snapshot["mode"]}
+                "expires_at": self.store.clock() + snapshot["profile"]["proposal_ttl_s"],
+                "evidence": snapshot["facts"], "profile": snapshot["profile"], "mode": snapshot["mode"]}
         with self.store.transaction():
             self.store.save_plan(scope, plan)
             self.store.event(scope, "proposed", plan)
@@ -38,7 +45,7 @@ class Runtime:
                 raise ValueError("La ejecución está disponible sólo en simulación")
             if plan["status"] != "ready":
                 raise ValueError("La propuesta no está autorizada para simularse")
-            if self.store.clock() > plan["expires_at"]:
+            if not plan["created_at"] <= self.store.clock() <= plan["expires_at"]:
                 raise ValueError("La propuesta venció. Genera una nueva")
             if snapshot["revision"] != plan["context_revision"]:
                 raise ValueError("El contexto cambió. Genera una nueva propuesta")

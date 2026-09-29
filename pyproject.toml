@@ -1,15 +1,16 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "rosa-robotics-kit"
-version = "0.3.1"
-description = "An experimental context and command layer for robot applications"
+version = "0.4.0"
+description = "An evolving context and command layer for advanced robot applications"
 readme = "README.md"
 authors = [{name = "CDT"}]
 requires-python = ">=3.11"
-license = {file = "LICENSE"}
+license = "MIT"
+license-files = ["LICENSE", "LICENSE-CDT", "THIRD_PARTY_NOTICES.md"]
 dependencies = []
 
 [project.urls]
@@ -21,11 +22,20 @@ Issues = "https://github.com/IgDiaz/ROSA/issues"
 [project.scripts]
 rosa = "rosa.__main__:main"
 
-[tool.setuptools]
-license-files = ["LICENSE", "LICENSE-CDT", "THIRD_PARTY_NOTICES.md"]
-
 [tool.setuptools.package-data]
 rosa = ["web/index.html", "web/favicon.svg"]
 
 [tool.setuptools.packages.find]
 include = ["rosa*"]
+
+[tool.coverage.run]
+branch = true
+source = ["rosa"]
+omit = ["rosa/__main__.py", "rosa/ros2.py"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]

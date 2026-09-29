@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ROSA acquisition telemetry v1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "user_id",
+    "robot_id",
+    "observed_at",
+    "sequence",
+    "values"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "user_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+    },
+    "robot_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+    },
+    "observed_at": {
+      "type": "number",
+      "minimum": 0
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9223372036854775807
+    },
+    "values": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "battery": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "obstacle": {
+          "type": "boolean"
+        },
+        "estop": {
+          "type": "boolean"
+        },
+        "position": {
+          "enum": [
+            "base",
+            "linea_1",
+            "linea_2",
+            "almacen"
+          ]
+        }
+      }
+    }
+  }
+}
