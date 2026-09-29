@@ -1,0 +1,14 @@
+flowchart TD
+    A["ROS 2 telemetry / simulator"] --> B["Colomos: scoped context and requirements"]
+    U["Operator command"] --> C["Tequila: rules or local AI"]
+    B --> C
+    C --> D["Minerva: validate proposal"]
+    B --> D
+    D --> E{"Current evidence and requirements met?"}
+    E -->|No| F["Explain and request fresh context"]
+    E -->|Yes| G["Operator confirmation"]
+    G --> H["Recheck context and proposal expiry"]
+    B --> H
+    H -->|Valid| I["Simulate once and record result"]
+    H -->|Changed or expired| F
+    B --> J["Chapala: explicit signed context export"]

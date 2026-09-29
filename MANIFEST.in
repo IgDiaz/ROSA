@@ -1,7 +1,7 @@
 include LICENSE LICENSE-CDT THIRD_PARTY_NOTICES.md PRIVACY.md SECURITY.md
 include QUALITY_DECLARATION.md requirements-dev.txt
 include README.md CHANGELOG.md CONTRIBUTING.md iniciar-demo.bat iniciar-demo.sh
-recursive-include docs *.md *.svg
+recursive-include docs *.md *.svg *.mmd
 recursive-include schemas *.json
 recursive-include examples *.py *.json
 recursive-include tests *.py

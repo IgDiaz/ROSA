@@ -64,22 +64,10 @@ The console animates simulated state transitions and generates labelled example 
 
 ### How the layers work together
 
-```mermaid
-flowchart TD
-    A["ROS 2 telemetry / simulator"] --> B["Colomos: scoped context and requirements"]
-    U["Operator command"] --> C["Tequila: rules or local AI"]
-    B --> C
-    C --> D["Minerva: validate proposal"]
-    B --> D
-    D --> E{"Current evidence and requirements met?"}
-    E -->|No| F["Explain and request fresh context"]
-    E -->|Yes| G["Operator confirmation"]
-    G --> H["Recheck context and proposal expiry"]
-    B --> H
-    H -->|Valid| I["Simulate once and record result"]
-    H -->|Changed or expired| F
-    B --> J["Chapala: explicit signed context export"]
-```
+![ROSA architecture: telemetry, context, command interpretation, validation and confirmed simulation](docs/assets/architecture.svg)
+
+[Editable Mermaid diagram](docs/assets/architecture.mmd) · [Detailed architecture](docs/ARCHITECTURE.md)
+
 
 ROS 2 provides the communication and robotics interfaces. ROSA adds scoped context, interpretation and reviewable command decisions. The diagram's execution path is the included simulator; the ROS 2 adapter observes and publishes context. [Architecture and integration boundaries](docs/ARCHITECTURE.md).
 
